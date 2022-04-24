@@ -22,18 +22,18 @@ def build_query(it, cmd, value):
         res = sorted(res, reverse=reverse)
     if cmd == "limit":
         arg = int(value)
-        res = list(res[:arg])
+        res = list(res)[:arg]
     return res
 
 
 @app.route("/perform_query")
 def perform_query():
     try:
-        cmd1 = request.args.get["cmd_1"]
-        cmd2 = request.args.get["cmd_2"]
-        value1 = request.args.get["value_1"]
-        value2 = request.args.get["value_2"]
-        file_name = request.args.get("file_name")
+        cmd1 = request.args["cmd1"]
+        cmd2 = request.args["cmd2"]
+        value1 = request.args["value1"]
+        value2 = request.args["value2"]
+        file_name = request.args["file_name"]
     except KeyError:
         raise BadRequest
 
@@ -43,9 +43,9 @@ def perform_query():
 
     with open(file_path) as fp:
         res = build_query(fp, cmd1, value1)
-        res = build_query(fp, cmd2, value2)
+        res = build_query(res, cmd2, value2)
         content = '\n'.join(res)
-
+        print(content)
 
     # получить параметры query и file_name из request.args, при ошибке вернуть ошибку 400
     # проверить, что файла file_name существует в папке DATA_DIR, при ошибке вернуть ошибку 400
